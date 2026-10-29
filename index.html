@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4efe6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#141311" media="(prefers-color-scheme: dark)">
+  <title>情歌 · 梁静茹</title>
+  <meta name="description" content="情歌 — 梁静茹。轻触播放。">
+  <meta property="og:type" content="music.song">
+  <meta property="og:title" content="情歌">
+  <meta property="og:description" content="梁静茹">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23d4552d'/%3E%3Cpath d='M40 13v23.5a7.5 7.5 0 1 1-4-6.6V21l14-2.5v17a7.5 7.5 0 1 1-4-6.6V13l-6 1.1Z' fill='%23fff8f0'/%3E%3C/svg%3E">
+
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4efe6;
+      --ink: #1d1a16;
+      --muted: #7c7467;
+      --line: #ded5c7;
+      --surface: #fbf7f0;
+      --track: #ddd3c4;
+      --accent: #d4552d;
+      --accent-soft: rgba(212, 85, 45, 0.10);
+      --cover-shadow: 0 28px 56px -28px rgba(53, 38, 22, 0.62);
+      --cover-size: clamp(180px, 62vw, 300px);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #141311;
+        --ink: #f3ede4;
+        --muted: #a49b8d;
+        --line: #35302a;
+        --surface: #1e1c18;
+        --track: #3a352e;
+        --accent: #e26a3e;
+        --accent-soft: rgba(226, 106, 62, 0.14);
+        --cover-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.88);
+      }
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100svh;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(58% 42% at 16% 8%, rgba(212, 85, 45, 0.14), transparent 72%),
+        radial-gradient(48% 38% at 92% 86%, rgba(84, 110, 90, 0.11), transparent 74%);
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 430px);
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0 auto;
+      padding:
+        calc(18px + env(safe-area-inset-top, 0px))
+        22px
+        calc(16px + env(safe-area-inset-bottom, 0px));
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 32px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .loop {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 36px;
+      padding: 6px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+    }
+
+    .loop svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .loop[aria-checked="true"] {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .loop:focus-visible,
+    .play-button:focus-visible,
+    .error button:focus-visible,
+    .wechat button:focus-visible,
+    .seek:focus-visible {
+      outline: 3px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 14px 0 10px;
+    }
+
+    .cover-shell {
+      position: relative;
+      width: var(--cover-size);
+      height: var(--cover-size);
+      flex: 0 0 auto;
+      overflow: hidden;
+      border-radius: 26px;
+      background: linear-gradient(145deg, #d9c7b1, #b49d84);
+      box-shadow: var(--cover-shadow);
+      isolation: isolate;
+    }
+
+    .cover-shell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+      pointer-events: none;
+    }
+
+    .cover-fallback {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(90% 70% at 20% 15%, rgba(255, 248, 237, 0.34), transparent 70%),
+        linear-gradient(145deg, #d8c2aa, #9f8a72);
+      color: rgba(255, 250, 242, 0.82);
+    }
+
+    .cover-fallback svg {
+      width: 42%;
+      height: 42%;
+      fill: currentColor;
+      filter: drop-shadow(0 10px 18px rgba(62, 44, 28, 0.18));
+    }
+
+    .cover {
+      position: relative;
+      z-index: 2;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 1;
+      transition: opacity 220ms ease;
+    }
+
+    .cover.is-hidden {
+      opacity: 0;
+    }
+
+    .meta {
+      width: 100%;
+      text-align: center;
+    }
+
+    .meta h1 {
+      margin: 0 0 7px;
+      font-size: clamp(25px, 7.4vw, 34px);
+      line-height: 1.22;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      overflow-wrap: anywhere;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .meta p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      letter-spacing: 0.06em;
+      overflow-wrap: anywhere;
+    }
+
+    .player {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .play-button {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff9f2;
+      box-shadow: 0 20px 36px -14px rgba(212, 85, 45, 0.72);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transition: transform 140ms ease, box-shadow 140ms ease, background-color 160ms ease;
+    }
+
+    .play-button:active {
+      transform: scale(0.955);
+      box-shadow: 0 12px 26px -14px rgba(212, 85, 45, 0.72);
+    }
+
+    .play-button[data-state="loading"] {
+      cursor: progress;
+    }
+
+    .play-button[data-state="error"] {
+      background: var(--ink);
+      color: var(--bg);
+      box-shadow: 0 20px 36px -16px rgba(0, 0, 0, 0.48);
+    }
+
+    .play-button svg {
+      display: none;
+      width: 38px;
+      height: 38px;
+    }
+
+    .play-button .icon-play,
+    .play-button .icon-pause {
+      fill: currentColor;
+    }
+
+    .play-button .icon-retry {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .play-button[data-state="idle"] .icon-play,
+    .play-button[data-state="paused"] .icon-play,
+    .play-button[data-state="ended"] .icon-play {
+      display: block;
+    }
+
+    .play-button[data-state="playing"] .icon-pause {
+      display: block;
+    }
+
+    .play-button[data-state="loading"] .spinner {
+      display: block;
+    }
+
+    .play-button[data-state="error"] .icon-retry {
+      display: block;
+    }
+
+    .icon-play {
+      margin-left: 4px;
+    }
+
+    .spinner {
+      display: none;
+      width: 31px;
+      height: 31px;
+      border: 3px solid rgba(255, 249, 242, 0.34);
+      border-top-color: #fff9f2;
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .status {
+      min-height: 1.4em;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+      letter-spacing: 0.08em;
+      text-align: center;
+    }
+
+    .timeline {
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .seek {
+      --progress: 0%;
+      display: block;
+      width: 100%;
+      height: 40px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      touch-action: pan-y;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .seek:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .seek::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(
+        to right,
+        var(--accent) 0%,
+        var(--accent) var(--progress),
+        var(--track) var(--progress),
+        var(--track) 100%
+      );
+    }
+
+    .seek::-moz-range-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--track);
+    }
+
+    .seek::-moz-range-progress {
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .seek::-webkit-slider-thumb {
+      width: 18px;
+      height: 18px;
+      margin-top: -6px;
+      border: 3px solid var(--bg);
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.22);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .seek::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border: 3px solid var(--bg);
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.22);
+    }
+
+    .time-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+
+    .error {
+      width: 100%;
+      padding: 14px 15px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      text-align: left;
+    }
+
+    .error strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .error p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .error button {
+      margin-top: 9px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+
+    .wechat {
+      width: 100%;
+      margin: 0;
+      padding: 10px 12px;
+      border-radius: 13px;
+      background: var(--accent-soft);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .wechat button {
+      padding: 0 0 0 4px;
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font: inherit;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+
+    .footer {
+      flex: 0 0 auto;
+      padding-top: 12px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+      letter-spacing: 0.08em;
+      text-align: center;
+      opacity: 0.82;
+    }
+
+    .audio {
+      position: fixed;
+      left: -9999px;
+      top: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    noscript {
+      position: relative;
+      z-index: 2;
+      display: block;
+      padding: 12px 20px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .loop:hover {
+        color: var(--ink);
+        border-color: var(--muted);
+      }
+
+      .loop[aria-checked="true"]:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .play-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 24px 42px -14px rgba(212, 85, 45, 0.78);
+      }
+
+      .play-button:active {
+        transform: scale(0.955);
+      }
+    }
+
+    @media (max-height: 680px) {
+      :root {
+        --cover-size: clamp(156px, 50vw, 220px);
+      }
+
+      .content {
+        gap: 14px;
+        padding: 8px 0 6px;
+      }
+
+      .play-button {
+        width: 86px;
+        height: 86px;
+      }
+
+      .play-button svg {
+        width: 34px;
+        height: 34px;
+      }
+
+      .timeline {
+        margin-top: 8px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <main class="app">
+    <header class="topbar">
+      <span class="badge"><span class="dot"></span>NFC · 单曲</span>
+      <button id="loopToggle" class="loop" type="button" role="switch" aria-checked="false" aria-label="循环播放">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M17 2.5 20.5 6 17 9.5"></path>
+          <path d="M3.5 11V9.5A3.5 3.5 0 0 1 7 6h13"></path>
+          <path d="M7 21.5 3.5 18 7 14.5"></path>
+          <path d="M20.5 13v1.5a3.5 3.5 0 0 1-3.5 3.5H4"></path>
+        </svg>
+        <span id="loopLabel">循环</span>
+      </button>
+    </header>
+
+    <div class="content">
+      <div class="cover-shell">
+        <div class="cover-fallback" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 4.2v11.4a3.4 3.4 0 1 1-1.7-2.95V7.1L9.8 8.7v9.8a3.4 3.4 0 1 1-1.7-2.95V6.2L20 4.2Z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <div class="meta">
+        <h1>情歌</h1>
+        <p>梁静茹</p>
+      </div>
+
+      <div class="player">
+        <button
+          id="playButton"
+          class="play-button"
+          type="button"
+          data-state="idle"
+          aria-label="播放"
+          aria-pressed="false"
+        >
+          <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 5.15v13.7c0 .82.9 1.32 1.6.9l10.2-6.85a1.06 1.06 0 0 0 0-1.8L9.6 4.25C8.9 3.83 8 4.33 8 5.15Z"></path>
+          </svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6.5" y="5" width="4" height="14" rx="1.4"></rect>
+            <rect x="13.5" y="5" width="4" height="14" rx="1.4"></rect>
+          </svg>
+          <svg class="icon-retry" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 11.5a8 8 0 1 0-2.3 5.7"></path>
+            <path d="M20 4.5v7h-7"></path>
+          </svg>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+
+        <p id="statusText" class="status" role="status" aria-live="polite">轻触播放 · 不会自动出声</p>
+
+        <div class="timeline">
+          <input
+            id="seek"
+            class="seek"
+            type="range"
+            min="0"
+            max="1000"
+            step="1"
+            value="0"
+            aria-label="播放进度"
+            disabled
+          >
+          <div class="time-row">
+            <span id="currentTime">0:00</span>
+            <span id="duration">--:--</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="errorBox" class="error" role="alert" hidden>
+        <strong id="errorTitle">音频加载失败</strong>
+        <p id="errorDetail">请检查网络后重试。</p>
+        <button id="retryButton" type="button">重新加载音频</button>
+      </div>
+
+      <p id="wechatHint" class="wechat" hidden>
+        微信内若无法播放，请点右上角 “···” → “在浏览器打开”。
+        <button id="dismissWechat" type="button">知道了</button>
+      </p>
+    </div>
+
+    <footer class="footer">仅播放已授权音乐 · 页面不收集信息</footer>
+  </main>
+
+  <audio
+    id="audio"
+    class="audio"
+    src="song.mp3"
+    preload="metadata"
+    playsinline
+    webkit-playsinline
+    aria-hidden="true"
+  ></audio>
+
+  <noscript>需要启用 JavaScript 才能播放音频。</noscript>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var audio = document.getElementById("audio");
+      var playButton = document.getElementById("playButton");
+      var statusText = document.getElementById("statusText");
+      var seek = document.getElementById("seek");
+      var currentTimeEl = document.getElementById("currentTime");
+      var durationEl = document.getElementById("duration");
+      var loopToggle = document.getElementById("loopToggle");
+      var loopLabel = document.getElementById("loopLabel");
+      var errorBox = document.getElementById("errorBox");
+      var errorTitle = document.getElementById("errorTitle");
+      var errorDetail = document.getElementById("errorDetail");
+      var retryButton = document.getElementById("retryButton");
+      var wechatHint = document.getElementById("wechatHint");
+      var dismissWechat = document.getElementById("dismissWechat");
+
+      var isSeeking = false;
+      var playPending = false;
+      var lastErrorCode = 0;
+
+      var UI = {
+        idle: { label: "播放", status: "轻触播放 · 不会自动出声" },
+        loading: { label: "暂停", status: "正在加载…" },
+        playing: { label: "暂停", status: "正在播放" },
+        paused: { label: "继续播放", status: "已暂停" },
+        ended: { label: "重新播放", status: "播放结束" },
+        error: { label: "重试", status: "播放失败" }
+      };
+
+      function setState(state, status) {
+        var ui = UI[state] || UI.idle;
+        playButton.setAttribute("data-state", state);
+        playButton.setAttribute("aria-label", ui.label);
+        playButton.setAttribute("aria-pressed", state === "playing" || state === "loading" ? "true" : "false");
+        statusText.textContent = status || ui.status;
+      }
+
+      function pad2(value) {
+        return value < 10 ? "0" + value : String(value);
+      }
+
+      function formatTime(value) {
+        if (!Number.isFinite(value) || value < 0) {
+          return "--:--";
+        }
+        var total = Math.floor(value);
+        var hours = Math.floor(total / 3600);
+        var minutes = Math.floor((total % 3600) / 60);
+        var seconds = total % 60;
+        if (hours > 0) {
+          return hours + ":" + pad2(minutes) + ":" + pad2(seconds);
+        }
+        return minutes + ":" + pad2(seconds);
+      }
+
+      function getDuration() {
+        var duration = audio.duration;
+        return Number.isFinite(duration) && duration > 0 ? duration : 0;
+      }
+
+      function paintProgress(seconds) {
+        var duration = getDuration();
+        if (!duration) {
+          return;
+        }
+        var ratio = Math.min(Math.max(seconds / duration, 0), 1);
+        seek.value = String(Math.round(ratio * 1000));
+        seek.style.setProperty("--progress", (ratio * 100).toFixed(2) + "%");
+        currentTimeEl.textContent = formatTime(seconds);
+      }
+
+      function syncTimeline() {
+        var duration = getDuration();
+        durationEl.textContent = duration ? formatTime(duration) : "--:--";
+        seek.disabled = !duration;
+        if (!isSeeking) {
+          paintProgress(audio.currentTime || 0);
+        }
+      }
+
+      function clearError() {
+        errorBox.hidden = true;
+        lastErrorCode = 0;
+      }
+
+      function showError(title, detail) {
+        errorTitle.textContent = title;
+        errorDetail.textContent = detail;
+        errorBox.hidden = false;
+      }
+
+      function showAudioError() {
+        var code = audio.error ? audio.error.code : 0;
+        if (code === lastErrorCode && !errorBox.hidden) {
+          return;
+        }
+        lastErrorCode = code;
+
+        var detail = "请检查网络，或稍后重试。";
+        if (code === 1) {
+          detail = "音频加载被中断。请检查网络后重试。";
+        } else if (code === 2) {
+          detail = "网络连接失败，或音频地址无法访问（常见原因：403、404）。";
+        } else if (code === 3) {
+          detail = "音频文件损坏，浏览器无法解码。";
+        } else if (code === 4) {
+          detail = "当前浏览器不支持这个音频格式，建议使用 MP3 或 M4A。";
+        }
+        if (navigator.onLine === false) {
+          detail += " 当前设备似乎没有联网。";
+        }
+        showError("音频加载失败", detail);
+        setState("error");
+      }
+
+      function showPlaybackError(error) {
+        var message = "请检查音频地址、网络和浏览器设置后重试。";
+        if (error && error.name === "NotSupportedError") {
+          message = "当前浏览器不支持这个音频格式，建议使用 MP3 或 M4A。";
+        } else if (error && error.name === "NotReadableError") {
+          message = "浏览器无法读取音频文件，请检查文件权限和格式。";
+        }
+        showError("无法开始播放", message);
+        setState("error");
+      }
+
+      function attemptPlay() {
+        clearError();
+        playPending = true;
+        setState("loading", "正在加载…");
+
+        var result;
+        try {
+          result = audio.play();
+        } catch (error) {
+          playPending = false;
+          showPlaybackError(error);
+          return;
+        }
+
+        if (result && typeof result.then === "function") {
+          result.then(function () {
+            playPending = false;
+          }).catch(function (error) {
+            playPending = false;
+            if (error && error.name === "AbortError") {
+              return;
+            }
+            if (error && error.name === "NotAllowedError") {
+              setState("paused", "请再次轻触播放");
+              return;
+            }
+            showPlaybackError(error);
+          });
+        } else {
+          playPending = false;
+        }
+      }
+
+      playButton.addEventListener("click", function () {
+        if (playPending) {
+          audio.pause();
+          playPending = false;
+          setState("paused", "已暂停");
+          return;
+        }
+
+        if (!audio.paused) {
+          audio.pause();
+          return;
+        }
+
+        if (audio.ended) {
+          try {
+            audio.currentTime = 0;
+          } catch (error) {
+            /* 元数据尚未就绪时忽略 */
+          }
+        }
+
+        if (audio.error) {
+          try {
+            audio.load();
+          } catch (error) {
+            /* 某些 WebView 在 load 时可能抛错，继续尝试 play */
+          }
+        }
+        attemptPlay();
+      });
+
+      retryButton.addEventListener("click", function () {
+        clearError();
+        playPending = false;
+        try {
+          audio.load();
+        } catch (error) {
+          /* 某些 WebView 在 load 时可能抛错，继续尝试 play */
+        }
+        attemptPlay();
+      });
+
+      audio.addEventListener("loadedmetadata", syncTimeline);
+      audio.addEventListener("durationchange", syncTimeline);
+      audio.addEventListener("timeupdate", function () {
+        if (!isSeeking) {
+          paintProgress(audio.currentTime || 0);
+        }
+      });
+
+      audio.addEventListener("play", function () {
+        if (!audio.paused) {
+          clearError();
+          setState("loading", "正在加载…");
+        }
+      });
+
+      audio.addEventListener("playing", function () {
+        clearError();
+        setState("playing");
+      });
+
+      audio.addEventListener("waiting", function () {
+        if (!audio.paused) {
+          setState("loading", "缓冲中…");
+        }
+      });
+
+      audio.addEventListener("canplay", function () {
+        if (!audio.paused) {
+          setState("playing");
+        }
+      });
+
+      audio.addEventListener("pause", function () {
+        if (audio.ended) {
+          setState("ended");
+          syncTimeline();
+          return;
+        }
+        if (audio.error) {
+          setState("error");
+          return;
+        }
+        setState("paused");
+      });
+
+      audio.addEventListener("ended", function () {
+        if (!audio.loop) {
+          setState("ended");
+          syncTimeline();
+        }
+      });
+
+      audio.addEventListener("error", function () {
+        playPending = false;
+        showAudioError();
+      });
+
+      seek.addEventListener("pointerdown", function () {
+        isSeeking = true;
+      });
+
+      seek.addEventListener("input", function () {
+        isSeeking = true;
+        var duration = getDuration();
+        if (duration) {
+          paintProgress((Number(seek.value) / 1000) * duration);
+        }
+      });
+
+      function commitSeek() {
+        if (!isSeeking) {
+          return;
+        }
+        var duration = getDuration();
+        if (duration) {
+          var target = (Number(seek.value) / 1000) * duration;
+          target = Math.min(Math.max(target, 0), Math.max(duration - 0.05, 0));
+          try {
+            audio.currentTime = target;
+          } catch (error) {
+            /* 忽略极少数 WebView 的定位异常 */
+          }
+          paintProgress(target);
+        }
+        isSeeking = false;
+      }
+
+      seek.addEventListener("change", commitSeek);
+      seek.addEventListener("pointerup", function () {
+        // 让原生 change 先完成，再兜底提交，避免个别浏览器提交旧进度。
+        window.setTimeout(commitSeek, 0);
+      });
+      seek.addEventListener("pointercancel", function () {
+        isSeeking = false;
+        paintProgress(audio.currentTime || 0);
+      });
+
+      loopToggle.addEventListener("click", function () {
+        var next = loopToggle.getAttribute("aria-checked") !== "true";
+        audio.loop = next;
+        loopToggle.setAttribute("aria-checked", next ? "true" : "false");
+        loopLabel.textContent = next ? "循环中" : "循环";
+      });
+
+
+      if (/MicroMessenger/i.test(navigator.userAgent)) {
+        wechatHint.hidden = false;
+      }
+      dismissWechat.addEventListener("click", function () {
+        wechatHint.hidden = true;
+      });
+
+      audio.loop = false;
+      setState("idle");
+      syncTimeline();
+    }());
+  </script>
+</body>
+</html>
